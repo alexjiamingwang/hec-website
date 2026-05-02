@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "services": "服务",
+    "team": "团队",
+    "gallery": "图库",
+    "inquire": "立即咨询",
+    "toggleWinter": "切换至冬季",
+    "toggleSummer": "切换至夏季"
+  },
+  "hero": {
+    "winter": {
+      "badge": "创立于 2024",
+      "headline": "北海道精英俱乐部",
+      "subheadline": "私人山地向导",
+      "tagline": "精准与粉雪的交汇。世界最深的积雪，由最富经验的向导带领。",
+      "cta": "立即咨询"
+    },
+    "summer": {
+      "badge": "创立于 2024",
+      "headline": "高山夏季",
+      "subheadline": "私人山地向导",
+      "tagline": "清澈海水、火山海岸、辽阔大海。从水面开始，感受北海道的夏天。",
+      "cta": "立即咨询"
+    }
+  },
+  "services": {
+    "sectionTitle": "我们的服务",
+    "sectionSubtitle": "专为对山地有更高要求的人而设计。",
+    "calculator": {
+      "title": "费率计算器",
+      "area": "区域",
+      "sapporo": "札幌地区（手稲 / 国际 / 藻岩）",
+      "outsideSapporo": "札幌以外（二世谷 / 基罗罗 / 留寿都…）",
+      "seasonality": "旺季/淡季",
+      "peak": "旺季",
+      "regular": "常规季",
+      "duration": "时长",
+      "3hr": "3小时（半天）",
+      "6hr": "6小时（含午餐）",
+      "7hr": "7小时（含午餐）",
+      "groupSize": "团队人数",
+      "group14": "1–4人",
+      "group5": "5人",
+      "group6": "6人",
+      "specifiedInstructor": "指定教练（+¥10,000）",
+      "total": "总价（按团队计）",
+      "deposit": "所需定金",
+      "perGroup": "团队价 · 含教练缆车票",
+      "proceed": "前往预订",
+      "placeholder": "请选择以上选项以查看价格"
+    },
+    "winter": {
+      "techAnalysis": {
+        "title": "积雪科学与技术分析",
+        "description": "利用实时数据、地形测绘和大气建模进行行前积雪状况简报。出发前了解您的山地。"
+      },
+      "backcountry": {
+        "title": "野外向导",
+        "description": "专家带领的二世谷、留寿都、手稲、基罗罗和富良野离坡及野外路线。只有我们才能带您走的线路。"
+      },
+      "concierge": {
+        "title": "精英礼宾服务",
+        "description": "直升机滑雪许可、私人温泉、怀石料理预订及豪华小屋协调。从抵达到离开，无缝衔接。"
+      },
+      "deepPowder": {
+        "title": "深粉专家",
+        "description": "时机就是一切。我们的风暴追踪情报与地形知识，将您定位在本季最深积雪的那一天。"
+      },
+      "safety": {
+        "title": "安全与救援",
+        "description": "AIARE认证向导、完整救援装备、实时信标协议，以及每次行程均包含的全面安全简报。"
+      },
+      "photography": {
+        "title": "摄影向导",
+        "description": "专为拍摄而设计的摄影专项行程。黄金时段定位、地点勘察，以及耐心等待最佳时机。"
+      }
+    },
+    "summer": {
+      "sup": {
+        "title": "立式桨板（SUP）",
+        "description": "在积丹半岛清澈见底的海域体验导览SUP。我们的ACA认证教练提供全程专业指导，适合初学者至进阶者。"
+      },
+      "seaKayaking": {
+        "title": "海上皮艇",
+        "description": "划行穿越壮观的海蚀洞穴，沿神威岬火山断崖探索。积丹海岸是北海道最不为人知的绝景秘境。"
+      },
+      "boatCharter": {
+        "title": "私人包船游览",
+        "description": "持牌船长驾驶专属船只，按您的路线定制行程——浮潜停靠、隐秘海湾探访、开阔海面驰骋，尽在掌握。"
+      },
+      "coastal": {
+        "title": "海岸综合探索",
+        "description": "海陆结合的多元体验：游泳、浮潜、崖壁徒步与潮间带探索。尽享日本最美海岸线的纯净与私密。"
+      },
+      "concierge": {
+        "title": "夏季礼宾服务",
+        "description": "精品民宿预订、积丹新鲜海鲜餐厅推荐与预约、北海道沿海地区定制交通安排，全程无忧。"
+      },
+      "photography": {
+        "title": "摄影向导",
+        "description": "海面与崖顶双视角，捕捉积丹海岸的非凡影像。无论水上还是陆地，我们为您找到最佳拍摄位置。"
+      }
+    }
+  },
+  "team": {
+    "sectionTitle": "向导团队",
+    "sectionSubtitle": "小而精英的阵容。无初级向导。每次预订均由资深专业人士带队。",
+    "certifications": "资质认证",
+    "specialties": "专业领域",
+    "languages": "使用语言",
+    "availability": "未来30天空档",
+    "available": "可预订",
+    "booked": "已预订",
+    "pending": "待确认",
+    "off": "休息日",
+    "inquireGuide": "向此向导咨询"
+  },
+  "gallery": {
+    "sectionTitle": "野外实拍",
+    "sectionSubtitle": "山间时光的精选记录。"
+  },
+  "checkout": {
+    "title": "开始咨询",
+    "name": "全名",
+    "email": "电子邮件地址",
+    "whatsapp": "WhatsApp号码",
+    "skillLevel": "技能水平",
+    "beginner": "初学者",
+    "intermediate": "中级",
+    "advanced": "高级",
+    "expert": "专家/运动员",
+    "notes": "补充说明（可选）",
+    "notesPlaceholder": "日期、团队人数、具体目标...",
+    "deposit": "使用 Square 支付定金",
+    "depositNote": "确认预订需支付30%定金。余款于行程前14天到账。",
+    "submit": "发送咨询",
+    "privacy": "您的信息将受到严格保护。"
+  }
+}

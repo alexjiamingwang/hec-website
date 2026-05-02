@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "services": "Services",
+    "team": "Team",
+    "gallery": "Gallery",
+    "inquire": "Inquire Now",
+    "toggleWinter": "Switch to Winter",
+    "toggleSummer": "Switch to Summer"
+  },
+  "hero": {
+    "winter": {
+      "badge": "EST. 2024",
+      "headline": "Hokkaido's Finest",
+      "subheadline": "Private Mountain Guiding",
+      "tagline": "Where precision meets powder. The world's deepest snow, guided by its most experienced hands.",
+      "cta": "Inquire Now"
+    },
+    "summer": {
+      "badge": "EST. 2024",
+      "headline": "Alpine Summer",
+      "subheadline": "Private Mountain Guiding",
+      "tagline": "Crystal water, volcanic coastline, open sea. Hokkaido's summer — from the water up.",
+      "cta": "Inquire Now"
+    }
+  },
+  "services": {
+    "sectionTitle": "Our Services",
+    "sectionSubtitle": "Engineered for those who demand more from the mountain.",
+    "calculator": {
+      "title": "Rate Calculator",
+      "area": "Area",
+      "sapporo": "Sapporo (Teine / Kokusai / Moiwa)",
+      "outsideSapporo": "Outside Sapporo (Niseko / Kiroro / Rusutsu…)",
+      "seasonality": "Seasonality",
+      "peak": "Peak Season",
+      "regular": "Regular Season",
+      "duration": "Duration",
+      "3hr": "3 Hours (half day)",
+      "6hr": "6 Hours incl. lunch",
+      "7hr": "7 Hours incl. lunch",
+      "groupSize": "Group Size",
+      "group14": "1–4 people",
+      "group5": "5 people",
+      "group6": "6 people",
+      "specifiedInstructor": "Specified Instructor  (+¥10,000)",
+      "total": "Total (per group)",
+      "deposit": "Deposit Required",
+      "perGroup": "per group · incl. instructor lift ticket",
+      "proceed": "Proceed to Booking",
+      "placeholder": "Select options above to see pricing"
+    },
+    "winter": {
+      "techAnalysis": {
+        "title": "Snow Science & Tech Analysis",
+        "description": "Pre-tour snowpack briefings using live data, terrain mapping, and atmospheric modelling. Know your mountain before you ride it."
+      },
+      "backcountry": {
+        "title": "Backcountry Guiding",
+        "description": "Expert-led off-piste and backcountry access across Niseko, Rusutsu, Teine, Kiroro, and Furano. Lines no one else will show you."
+      },
+      "concierge": {
+        "title": "Elite Concierge",
+        "description": "Heliski permits, private onsen access, kaiseki reservations, and luxury lodge coordination. Seamless from arrival to departure."
+      },
+      "deepPowder": {
+        "title": "Deep Powder Specialist",
+        "description": "Timing is everything. Our storm-chasing intelligence and terrain knowledge position you for the deepest days of the season."
+      },
+      "safety": {
+        "title": "Safety & Rescue",
+        "description": "AIARE-certified guides, full rescue kit, real-time beacon protocols, and comprehensive pre-tour safety briefings included on every tour."
+      },
+      "photography": {
+        "title": "Photography Guiding",
+        "description": "Dedicated photography tours designed for the shot. Golden hour positioning, location scouting, and patience to wait for the moment."
+      }
+    },
+    "summer": {
+      "sup": {
+        "title": "Stand-Up Paddleboarding",
+        "description": "Guided SUP sessions on the gin-clear waters of the Shakotan Peninsula. Full coaching from our ACA-certified instructor — beginners to advanced."
+      },
+      "seaKayaking": {
+        "title": "Sea Kayaking",
+        "description": "Paddle through dramatic sea caves and along Cape Kamui's volcanic cliffs. Shakotan's coastline is one of Hokkaido's best-kept secrets."
+      },
+      "boatCharter": {
+        "title": "Private Boat Charter",
+        "description": "Licensed skipper, private vessel, your itinerary. Explore the Shakotan Peninsula from the water — snorkelling stops, hidden coves, and open-sea running."
+      },
+      "coastal": {
+        "title": "Coastal Exploration",
+        "description": "Combined sea and shore experiences: swimming, snorkelling, cliff walks, and rock pooling along one of Japan's most scenically unspoiled coastlines."
+      },
+      "concierge": {
+        "title": "Summer Concierge",
+        "description": "Boutique guesthouse bookings, fresh seafood reservations at Shakotan's best restaurants, and curated transport logistics across the Hokkaido coast."
+      },
+      "photography": {
+        "title": "Photography Guiding",
+        "description": "Sea-level and aerial perspectives on the Shakotan coast. Position yourself for the extraordinary frame — on the water or from the clifftop."
+      }
+    }
+  },
+  "team": {
+    "sectionTitle": "The Guiding Team",
+    "sectionSubtitle": "A small, elite roster. No junior guides. Every booking is led by a senior professional.",
+    "certifications": "Certifications",
+    "specialties": "Specialties",
+    "languages": "Languages",
+    "availability": "Availability — Next 30 Days",
+    "available": "Available",
+    "booked": "Booked",
+    "pending": "Pending",
+    "off": "Rest Day",
+    "inquireGuide": "Inquire with this Guide"
+  },
+  "gallery": {
+    "sectionTitle": "In the Field",
+    "sectionSubtitle": "A selection of moments from the mountain."
+  },
+  "checkout": {
+    "title": "Start Your Inquiry",
+    "name": "Full Name",
+    "email": "Email Address",
+    "whatsapp": "WhatsApp Number",
+    "skillLevel": "Skill Level",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "expert": "Expert / Athlete",
+    "notes": "Additional Notes (optional)",
+    "notesPlaceholder": "Dates, group size, specific goals...",
+    "deposit": "Pay Deposit with Square",
+    "depositNote": "30% deposit required to confirm booking. Balance due 14 days before tour.",
+    "submit": "Send Inquiry",
+    "privacy": "Your information is kept strictly private."
+  }
+}

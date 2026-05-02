@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "services": "サービス",
+    "team": "チーム",
+    "gallery": "ギャラリー",
+    "inquire": "お問い合わせ",
+    "toggleWinter": "ウィンターに切替",
+    "toggleSummer": "サマーに切替"
+  },
+  "hero": {
+    "winter": {
+      "badge": "EST. 2024",
+      "headline": "北海道の最高峰",
+      "subheadline": "プライベート・マウンテンガイド",
+      "tagline": "精密さとパウダーが融合する場所。世界最深の雪を、最も経験豊かな案内人と。",
+      "cta": "お問い合わせ"
+    },
+    "summer": {
+      "badge": "EST. 2024",
+      "headline": "アルパイン・サマー",
+      "subheadline": "プライベート・マウンテンガイド",
+      "tagline": "透き通る海、火山の断崖、果てなき水平線。水上から始まる北海道の夏。",
+      "cta": "お問い合わせ"
+    }
+  },
+  "services": {
+    "sectionTitle": "サービス",
+    "sectionSubtitle": "山に更なる要求を持つ方々のために設計されています。",
+    "calculator": {
+      "title": "料金計算機",
+      "area": "エリア",
+      "sapporo": "札幌（テイネ / 国際 / 藻岩）",
+      "outsideSapporo": "札幌以外（ニセコ / キロロ / ルスツ…）",
+      "seasonality": "シーズン",
+      "peak": "ピークシーズン",
+      "regular": "レギュラーシーズン",
+      "duration": "時間",
+      "3hr": "3時間（ハーフデイ）",
+      "6hr": "6時間（昼食込み）",
+      "7hr": "7時間（昼食込み）",
+      "groupSize": "グループ人数",
+      "group14": "1〜4名",
+      "group5": "5名",
+      "group6": "6名",
+      "specifiedInstructor": "インストラクター指定（+¥10,000）",
+      "total": "合計（グループ料金）",
+      "deposit": "必要デポジット",
+      "perGroup": "グループ料金 · インストラクターのリフト券込み",
+      "proceed": "予約に進む",
+      "placeholder": "上記のオプションを選択してください"
+    },
+    "winter": {
+      "techAnalysis": {
+        "title": "積雪科学・技術分析",
+        "description": "ライブデータ、地形マッピング、気象モデリングを使用したツアー前の積雪状況ブリーフィング。"
+      },
+      "backcountry": {
+        "title": "バックカントリーガイド",
+        "description": "ニセコ、ルスツ、テイネ、キロロ、富良野のエキスパートによるオフピスト・バックカントリーへのアクセス。"
+      },
+      "concierge": {
+        "title": "エリートコンシェルジュ",
+        "description": "ヘリスキー許可証、プライベート温泉アクセス、懐石料理の予約、ラグジュアリーロッジのコーディネート。"
+      },
+      "deepPowder": {
+        "title": "ディープパウダースペシャリスト",
+        "description": "タイミングがすべて。私たちのストームチェイシング情報と地形知識があなたをシーズン最深の日に導きます。"
+      },
+      "safety": {
+        "title": "安全・救助",
+        "description": "AIARE認定ガイド、完全な救助キット、リアルタイムビーコンプロトコル、包括的な安全ブリーフィングを全ツアーに含みます。"
+      },
+      "photography": {
+        "title": "フォトグラフィーガイド",
+        "description": "ショットのために設計された専用フォトグラフィーツアー。ゴールデンアワーのポジショニング、ロケーションスカウティング。"
+      }
+    },
+    "summer": {
+      "sup": {
+        "title": "スタンドアップパドルボード（SUP）",
+        "description": "積丹半島の透き通る海でガイド付きSUP体験。ACA認定インストラクターによる丁寧な指導で初心者から上級者まで対応。"
+      },
+      "seaKayaking": {
+        "title": "シーカヤッキング",
+        "description": "ダイナミックな海食洞窟や神威岬の火山断崖沿いをパドルで進む。積丹の海岸線は北海道の隠れた秘境です。"
+      },
+      "boatCharter": {
+        "title": "プライベートボートチャーター",
+        "description": "船長免許保有者が操船する専用ボートで、あなただけの海上ルートを。シュノーケリングや秘密の入り江への寄港も可能。"
+      },
+      "coastal": {
+        "title": "コースタル・エクスプロレーション",
+        "description": "海と陸の複合体験：遊泳、シュノーケリング、岸壁ウォーク。日本屈指の絶景海岸線をプライベートに楽しむ。"
+      },
+      "concierge": {
+        "title": "サマーコンシェルジュ",
+        "description": "こだわりのゲストハウス予約、積丹の新鮮海の幸レストラン手配、北海道沿岸エリアのカスタム移動手配まで。"
+      },
+      "photography": {
+        "title": "フォトグラフィーガイド",
+        "description": "水面・崖上からの積丹コースト撮影ガイド。非日常のフレームを狙うすべてのポジションを案内します。"
+      }
+    }
+  },
+  "team": {
+    "sectionTitle": "ガイドチーム",
+    "sectionSubtitle": "少数精鋭のロスター。ジュニアガイドなし。すべての予約はシニアプロフェッショナルが担当します。",
+    "certifications": "資格・認定",
+    "specialties": "専門分野",
+    "languages": "対応言語",
+    "availability": "空き状況 — 直近30日",
+    "available": "空き",
+    "booked": "予約済",
+    "pending": "確認中",
+    "off": "休養日",
+    "inquireGuide": "このガイドに問い合わせる"
+  },
+  "gallery": {
+    "sectionTitle": "フィールドより",
+    "sectionSubtitle": "山からのひとときを。"
+  },
+  "checkout": {
+    "title": "お問い合わせを開始",
+    "name": "氏名",
+    "email": "メールアドレス",
+    "whatsapp": "WhatsApp番号",
+    "skillLevel": "スキルレベル",
+    "beginner": "ビギナー",
+    "intermediate": "インターメディエート",
+    "advanced": "アドバンスド",
+    "expert": "エキスパート / アスリート",
+    "notes": "備考（任意）",
+    "notesPlaceholder": "日程、グループ人数、目標など...",
+    "deposit": "Squareでデポジットを支払う",
+    "depositNote": "予約確定には30%のデポジットが必要です。残金はツアー14日前までに。",
+    "submit": "お問い合わせを送信",
+    "privacy": "お客様の情報は厳重に管理されます。"
+  }
+}

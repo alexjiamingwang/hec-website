@@ -1,0 +1,417 @@
+"use client";
+
+import { useState, useMemo, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { useCheckout } from "@/context/CheckoutContext";
+import {
+  calculateRate,
+  formatYen,
+  type PricingArea,
+  type PricingSeasonality,
+  type PricingGroupSize,
+  type PricingDuration,
+} from "../../../data/pricing";
+
+// ─── Location → Area mapping ──────────────────────────────────────────────────
+
+interface LocationOption {
+  value: string;
+  label: string;
+  area: PricingArea;
+  [key: string]: unknown;
+}
+
+interface LocationGroup {
+  group: string;
+  options: LocationOption[];
+}
+
+const LOCATION_GROUPS: LocationGroup[] = [
+  {
+    group: "Sapporo Area",
+    options: [
+      { value: "teine",   label: "Teine",   area: "sapporo" },
+      { value: "kokusai", label: "Kokusai", area: "sapporo" },
+      { value: "moiwa",   label: "Moiwa",   area: "sapporo" },
+    ],
+  },
+  {
+    group: "Outside Sapporo",
+    options: [
+      { value: "niseko",    label: "Niseko",    area: "outside-sapporo" },
+      { value: "kiroro",    label: "Kiroro",    area: "outside-sapporo" },
+      { value: "rusutsu",   label: "Rusutsu",   area: "outside-sapporo" },
+      { value: "asarigawa", label: "Asarigawa", area: "outside-sapporo" },
+      { value: "furano",    label: "Furano",    area: "outside-sapporo" },
+      { value: "tomamu",    label: "Tomamu",    area: "outside-sapporo" },
+      { value: "sahoro",    label: "Sahoro",    area: "outside-sapporo" },
+    ],
+  },
+];
+
+const ALL_LOCATIONS: LocationOption[] = LOCATION_GROUPS.flatMap((g) => g.options);
+
+type LocationValue = string;
+
+// ─── Simple flat options ──────────────────────────────────────────────────────
+
+const SEASON_OPTIONS = [
+  { value: "regular" as PricingSeasonality, label: "Regular" },
+  { value: "peak"    as PricingSeasonality, label: "Peak" },
+];
+
+const DURATION_OPTIONS = [
+  { value: "3hr" as PricingDuration, label: "3 Hours" },
+  { value: "6hr" as PricingDuration, label: "6 Hours" },
+  { value: "7hr" as PricingDuration, label: "7 Hours" },
+];
+
+const GROUP_OPTIONS = [
+  { value: "1-4" as PricingGroupSize, label: "1–4 people" },
+  { value: "5"   as PricingGroupSize, label: "5 people" },
+  { value: "6"   as PricingGroupSize, label: "6 people" },
+];
+
+// ─── Custom Dropdown ──────────────────────────────────────────────────────────
+
+interface DropdownOption {
+  value: string;
+  label: string;
+  [key: string]: unknown;
+}
+
+interface DropdownGroup {
+  group: string;
+  options: DropdownOption[];
+}
+
+function CustomDropdown({
+  label,
+  value,
+  onChange,
+  options,
+  groups,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options?: DropdownOption[];
+  groups?: readonly DropdownGroup[];
+}) {
+  const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Find selected label from either flat options or grouped options
+  const allOptions = options ?? groups?.flatMap((g) => g.options) ?? [];
+  const selectedOption = allOptions.find((o) => o.value === value);
+
+  const renderOption = (opt: DropdownOption) => (
+    <button
+      key={opt.value}
+      type="button"
+      onMouseEnter={() => setHovered(opt.value)}
+      onMouseLeave={() => setHovered(null)}
+      onClick={() => { onChange(opt.value); setOpen(false); }}
+      className="w-full text-left px-4 py-2.5 text-sm font-body transition-colors duration-100"
+      style={{
+        color:
+          opt.value === value
+            ? "var(--season-accent)"
+            : hovered === opt.value
+            ? "var(--text-primary)"
+            : "var(--text-secondary)",
+        background:
+          opt.value === value
+            ? "color-mix(in srgb, var(--season-accent) 8%, var(--surface-3))"
+            : hovered === opt.value
+            ? "var(--surface-2)"
+            : "transparent",
+      }}
+    >
+      {opt.label}
+      {opt.value === value && (
+        <span className="float-right" style={{ color: "var(--season-accent)" }}>✓</span>
+      )}
+    </button>
+  );
+
+  return (
+    <div ref={ref} className="relative flex flex-col gap-2">
+      <label
+        className="font-mono text-[0.65rem] tracking-[0.3em] uppercase"
+        style={{ color: "var(--text-secondary)" }}
+      >
+        {label}
+      </label>
+
+      {/* Trigger */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full text-left flex items-center justify-between px-4 py-3 text-sm transition-all duration-200"
+        style={{
+          background: "var(--surface-3)",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: open ? "var(--season-accent)" : "var(--border-subtle)",
+          color: "var(--text-primary)",
+        }}
+      >
+        <span>{selectedOption?.label ?? "Select…"}</span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ color: "var(--text-muted)", fontSize: "0.65rem" }}
+        >
+          ▾
+        </motion.span>
+      </button>
+
+      {/* Dropdown panel */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scaleY: 0.97 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -6, scaleY: 0.97 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            style={{
+              transformOrigin: "top",
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 50,
+              background: "var(--surface-3)",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              borderColor: "var(--season-accent)",
+              borderTop: "none",
+              maxHeight: "260px",
+              overflowY: "auto",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
+            }}
+          >
+            {/* Flat options */}
+            {options && options.map(renderOption)}
+
+            {/* Grouped options */}
+            {groups &&
+              groups.map((grp) => (
+                <div key={grp.group}>
+                  <div
+                    className="px-4 py-2 font-mono text-[0.6rem] tracking-[0.3em] uppercase"
+                    style={{
+                      color: "var(--season-accent)",
+                      borderBottom: "1px solid var(--border-subtle)",
+                      background: "var(--surface-2)",
+                    }}
+                  >
+                    {grp.group}
+                  </div>
+                  {grp.options.map(renderOption)}
+                </div>
+              ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ─── Rate Calculator ──────────────────────────────────────────────────────────
+
+export function RateCalculator() {
+  const t = useTranslations("services.calculator");
+  const { openCheckout } = useCheckout();
+
+  const [location, setLocation] = useState<LocationValue>("niseko");
+  const [seasonality, setSeasonality] = useState<PricingSeasonality>("regular");
+  const [duration, setDuration] = useState<PricingDuration>("6hr");
+  const [groupSize, setGroupSize] = useState<PricingGroupSize>("1-4");
+  const [specifiedInstructor, setSpecifiedInstructor] = useState(false);
+
+  // Derive pricing area from selected location
+  const area: PricingArea =
+    ALL_LOCATIONS.find((l) => l.value === location)?.area ?? "outside-sapporo";
+
+  const result = useMemo(
+    () => calculateRate({ area, seasonality, duration, groupSize, specifiedInstructor }),
+    [area, seasonality, duration, groupSize, specifiedInstructor]
+  );
+
+  const handleProceed = () => {
+    if (!result) return;
+    openCheckout({ rate: result });
+  };
+
+  return (
+    <div
+      className="p-8 md:p-10"
+      style={{
+        background: "var(--surface-2)",
+        border: "1px solid var(--border-subtle)",
+      }}
+    >
+      {/* Title */}
+      <div className="mb-8">
+        <span className="hec-divider mb-4 block" />
+        <h3
+          className="font-display text-2xl md:text-3xl italic mb-1"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {t("title")}
+        </h3>
+      </div>
+
+      {/* Controls grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        {/* Location */}
+        <CustomDropdown
+          label="Location"
+          value={location}
+          onChange={(v) => setLocation(v as LocationValue)}
+          groups={LOCATION_GROUPS}
+        />
+
+        {/* Seasonality */}
+        <CustomDropdown
+          label="Season"
+          value={seasonality}
+          onChange={(v) => setSeasonality(v as PricingSeasonality)}
+          options={SEASON_OPTIONS}
+        />
+
+        {/* Duration */}
+        <CustomDropdown
+          label="Duration"
+          value={duration}
+          onChange={(v) => setDuration(v as PricingDuration)}
+          options={DURATION_OPTIONS}
+        />
+
+        {/* Group size */}
+        <CustomDropdown
+          label="Group Size"
+          value={groupSize}
+          onChange={(v) => setGroupSize(v as PricingGroupSize)}
+          options={GROUP_OPTIONS}
+        />
+      </div>
+
+      {/* Specified instructor */}
+      <label className="flex items-center gap-3 cursor-pointer mb-8 w-fit group">
+        <span
+          className="w-5 h-5 border flex items-center justify-center transition-colors duration-200 flex-shrink-0"
+          style={{
+            background: specifiedInstructor ? "var(--season-accent)" : "var(--surface-3)",
+            borderColor: specifiedInstructor ? "var(--season-accent)" : "var(--border-mid)",
+          }}
+        >
+          {specifiedInstructor && (
+            <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path
+                d="M1 4L4 7L10 1"
+                stroke="var(--surface-1)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </span>
+        <input
+          type="checkbox"
+          checked={specifiedInstructor}
+          onChange={(e) => setSpecifiedInstructor(e.target.checked)}
+          className="sr-only"
+        />
+        <span
+          className="font-mono text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          {t("specifiedInstructor")} +¥10,000
+        </span>
+      </label>
+
+      {/* Season date reference */}
+      <div
+        className="flex flex-wrap gap-x-8 gap-y-2 mb-8 pb-8"
+        style={{ borderBottom: "1px solid var(--border-subtle)" }}
+      >
+        <p className="font-mono text-[0.6rem] tracking-wider" style={{ color: "var(--text-muted)" }}>
+          <span className="accent-text mr-1.5">●</span>
+          Peak: Dec 15–Jan 12 &amp; Jan 24–Feb 25
+        </p>
+        <p className="font-mono text-[0.6rem] tracking-wider" style={{ color: "var(--text-muted)" }}>
+          <span className="mr-1.5" style={{ color: "var(--text-muted)" }}>●</span>
+          Regular: Nov 20–Dec 14 | Jan 13–23 | Feb 26–end
+        </p>
+      </div>
+
+      {/* Result + CTA */}
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        {result ? (
+          <div>
+            <p
+              className="font-mono text-[0.6rem] tracking-[0.3em] uppercase mb-2"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Total
+            </p>
+            <p
+              className="font-display text-5xl md:text-6xl"
+              style={{ color: "var(--text-primary)", lineHeight: 1 }}
+            >
+              {formatYen(result.total)}
+            </p>
+            <p
+              className="font-mono text-[0.6rem] tracking-wider mt-2"
+              style={{ color: "var(--text-muted)" }}
+            >
+              per group · includes instructor lift ticket
+              {result.surcharge > 0 && " · specified instructor"}
+            </p>
+          </div>
+        ) : (
+          <p
+            className="font-mono text-xs tracking-widest uppercase"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {t("placeholder")}
+          </p>
+        )}
+
+        {/* Proceed CTA */}
+        <button
+          onClick={handleProceed}
+          disabled={!result}
+          className="group relative px-8 py-4 font-mono text-xs tracking-[0.25em] uppercase overflow-hidden border transition-colors duration-300 flex-shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
+          style={{
+            borderColor: "var(--season-accent)",
+            color: "var(--text-primary)",
+          }}
+        >
+          <span
+            className="absolute inset-0 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out group-disabled:translate-x-[-101%]"
+            style={{ background: "var(--season-accent)" }}
+          />
+          <span className="relative group-hover:text-obsidian transition-colors duration-300">
+            {t("proceed")}
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}

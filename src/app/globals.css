@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── HEC Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Base palette */
+  --obsidian:      #10121C;   /* winter: deep navy-dark */
+  --obsidian-50:   #1C1F30;
+  --obsidian-100:  #161828;
+  --slate-hec:     #8A9BAE;
+  --slate-light:   #B4C2CF;
+  --slate-dark:    #5A6E82;
+  --stark:         #F5F5F0;
+  --stark-pure:    #FFFFFF;
+  --stark-muted:   #D4D4CE;
+
+  /* Season accent — controlled by JS via CSS custom props */
+  --season-accent: #7BB3D4;   /* winter default */
+  --season-glow:   #A8CFEA;
+  --season-dim:    #4A7A96;
+
+  /* Semantic theme tokens (switch with season) */
+  --text-primary:   #F5F5F0;
+  --text-secondary: #8A9BAE;
+  --text-muted:     #5A6E82;
+  --surface-1:      #10121C;   /* page bg */
+  --surface-2:      #1C1F30;   /* elevated */
+  --surface-3:      #161828;   /* input / dropdown bg */
+  --border-subtle:  rgba(255,255,255,0.07);
+  --border-mid:     rgba(255,255,255,0.12);
+
+  /* Typography scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+  --text-8xl:  6rem;
+
+  /* Spacing / layout */
+  --section-padding-y: 7rem;
+  --container-max:     1280px;
+  --navbar-h:          72px;
+}
+
+/* ─── Season CSS transition helper ──────────────────────────────────────────── */
+[data-season="winter"] {
+  --season-accent: #7BB3D4;
+  --season-glow:   #A8CFEA;
+  --season-dim:    #4A7A96;
+}
+
+[data-season="summer"] {
+  --season-accent: #D4956A;
+  --season-glow:   #E8B594;
+  --season-dim:    #A06840;
+
+  /* Override semantic tokens for light mode */
+  --text-primary:   #1C1410;
+  --text-secondary: #7B6B62;
+  --text-muted:     #9B8B82;
+  --surface-1:      #F6F3EE;
+  --surface-2:      #FFFFFF;
+  --surface-3:      #EDEAE4;
+  --border-subtle:  rgba(0,0,0,0.07);
+  --border-mid:     rgba(0,0,0,0.13);
+}
+
+/* ─── Base resets & styles ───────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--surface-1);
+  color: var(--text-primary);
+  font-family: var(--font-body), sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* ─── Summer light mode — Tailwind class overrides ───────────────────────────── */
+/* These use (0,2,0) specificity to beat Tailwind's (0,1,0) */
+[data-season="summer"] .bg-obsidian   { background-color: #F6F3EE; }
+[data-season="summer"] .bg-obsidian-50  { background-color: #FFFFFF; }
+[data-season="summer"] .bg-obsidian-100 { background-color: #EDEAE4; }
+[data-season="summer"] .text-stark       { color: #1C1410; }
+[data-season="summer"] .text-stark-muted { color: #3A2A20; }
+[data-season="summer"] .text-slate-hec   { color: #7B6B62; }
+[data-season="summer"] .text-slate-dark  { color: #9B8B82; }
+[data-season="summer"] .text-slate-light { color: #3A2A20; }
+/* Border overrides */
+[data-season="summer"] .border-white\/5  { border-color: rgba(0,0,0,0.06); }
+[data-season="summer"] .border-white\/8  { border-color: rgba(0,0,0,0.08); }
+[data-season="summer"] .border-white\/10 { border-color: rgba(0,0,0,0.10); }
+[data-season="summer"] .border-white\/25 { border-color: rgba(0,0,0,0.18); }
+/* White bg overlays */
+[data-season="summer"] .bg-white\/5  { background-color: rgba(0,0,0,0.04); }
+[data-season="summer"] .hover\:bg-white\/5:hover { background-color: rgba(0,0,0,0.04); }
+/* Gradient overrides for fade-edge effects */
+[data-season="summer"] .from-obsidian { --tw-gradient-from: #F6F3EE var(--tw-gradient-from-position); --tw-gradient-to: rgba(246,243,238,0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+[data-season="summer"] .to-obsidian   { --tw-gradient-to: #F6F3EE var(--tw-gradient-to-position); }
+
+/* ─── Typography utilities ───────────────────────────────────────────────────── */
+.font-display { font-family: var(--font-display), serif; }
+.font-body    { font-family: var(--font-body), sans-serif; }
+.font-mono    { font-family: var(--font-mono), monospace; }
+
+/* ─── Glassmorphism base ─────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(16, 18, 28, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+.glass-light {
+  background: rgba(28, 31, 48, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+/* Summer glass — warm frosted */
+[data-season="summer"] .glass {
+  background: rgba(246, 243, 238, 0.82);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+[data-season="summer"] .glass-light {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.10);
+}
+
+/* ─── Season accent border / text / bg ──────────────────────────────────────── */
+.accent-border { border-color: var(--season-accent); }
+.accent-text   { color: var(--season-accent); }
+.accent-bg     { background-color: var(--season-accent); }
+
+/* ─── Semantic surface classes (season-aware) ────────────────────────────────── */
+.hec-surface { background: var(--surface-1); }
+.hec-card    { background: var(--surface-2); border: 1px solid var(--border-subtle); }
+.hec-input   { background: var(--surface-3); border: 1px solid var(--border-subtle); color: var(--text-primary); }
+.hec-text    { color: var(--text-primary); }
+.hec-text-secondary { color: var(--text-secondary); }
+.hec-text-muted     { color: var(--text-muted); }
+.hec-border  { border-color: var(--border-subtle); }
+
+/* ─── Carousel arrow button ──────────────────────────────────────────────────── */
+.carousel-arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-mid);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.carousel-arrow:hover {
+  border-color: var(--season-accent);
+  color: var(--season-accent);
+  background: color-mix(in srgb, var(--season-accent) 8%, var(--surface-2));
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-1); }
+::-webkit-scrollbar-thumb { background: var(--slate-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-hec); }
+
+/* ─── Selection ──────────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--season-accent);
+  color: #F5F5F0;
+}
+[data-season="summer"] ::selection { color: #1C1410; }
+
+/* ─── Focus styles ───────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--season-accent);
+  outline-offset: 3px;
+}
+
+/* ─── Mobile layout scale-down ──────────────────────────────────────────────── */
+@media (max-width: 639px) {
+  :root {
+    --section-padding-y: 4rem;
+  }
+}
+
+/* ─── Section container ──────────────────────────────────────────────────────── */
+.section-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-container { padding: 0 2.5rem; }
+}
+
+@media (min-width: 1280px) {
+  .section-container { padding: 0 3rem; }
+}
+
+/* ─── Horizontal rule ────────────────────────────────────────────────────────── */
+.hec-divider {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--season-accent);
+  display: block;
+}
+
+/* ─── Season swap animation ──────────────────────────────────────────────────── */
+.season-content {
+  animation: seasonSwap 0.4s ease-in-out;
+}
+
+@keyframes seasonSwap {
+  0%   { opacity: 0.5; filter: blur(3px); }
+  100% { opacity: 1;   filter: blur(0); }
+}
+
+/* ─── Noise grain overlay (for texture) ──────────────────────────────────────── */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
