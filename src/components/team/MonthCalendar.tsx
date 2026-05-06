@@ -168,15 +168,10 @@ export function MonthCalendar({ guideId, initialDays }: MonthCalendarProps) {
             <div
               key={day}
               title={`${MONTH_NAMES[monthNum - 1]} ${day} — ${status}`}
-              className={clsx(
-                "aspect-square rounded-sm flex items-center justify-center font-mono",
-                isToday && "ring-2 ring-offset-1"
-              )}
+              className="aspect-square rounded-sm flex items-center justify-center font-mono"
               style={{
                 fontSize: "0.5rem",
                 color: "rgba(0,0,0,0.55)",
-                ringOffsetColor: "var(--surface-1)",
-                ringColor: isToday ? "var(--season-accent)" : undefined,
                 outline: isToday ? `2px solid var(--season-accent)` : undefined,
                 outlineOffset: isToday ? "1px" : undefined,
                 ...statusStyle(status),
