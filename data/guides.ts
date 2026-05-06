@@ -43,7 +43,7 @@ export const guides: Guide[] = [
     photo: "/images/team/mibo-yu.jpg",
     languages: ["Chinese", "Japanese", "English"],
     calendar: mockCalendar([5, 6, 12, 13, 19, 25, 26, 29, 30]),
-    calendarId: process.env.NEXT_PUBLIC_MIBO_CALENDAR_ID,
+    calendarId: process.env.MIBO_CALENDAR_ID,
   },
   {
     id: "kai-nakamura",
