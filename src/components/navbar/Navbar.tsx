@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { clsx } from "clsx";
 import { SeasonToggle } from "./SeasonToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { HecLogo } from "./HecLogo";
 import { useSeason } from "@/context/SeasonContext";
 import type { Locale } from "@/types";
 
@@ -59,9 +58,21 @@ export function Navbar({ locale }: NavbarProps) {
         {/* ── LEFT: Logo + Nav links ─────────────────────────────────────────── */}
         <div className="flex items-center gap-8">
 
-          {/* Logo — colour-flips with season via color prop */}
+          {/* Logo — transparent PNG, CSS filter flips strokes white (winter) or keeps dark (summer) */}
           <a href="#" aria-label="Hokkaido Elite Club" className="flex-shrink-0">
-            <HecLogo color={isWinter ? "#F5F5F0" : "#1C1410"} size={44} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/logo-clean.png"
+              alt="Hokkaido Elite Club"
+              style={{
+                height: 44,
+                width: "auto",
+                // Winter dark bg → invert black strokes to white
+                // Summer light bg → strokes stay dark, no filter needed
+                filter: isWinter ? "invert(1) brightness(1.8)" : "none",
+                transition: "filter 0.5s ease",
+              }}
+            />
           </a>
 
           {/* Desktop nav links */}
