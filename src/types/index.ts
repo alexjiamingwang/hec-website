@@ -56,6 +56,7 @@ export interface Guide {
   photo: string;
   calendar: CalendarDay[];
   languages: string[];
+  calendarId?: string;        // Google Calendar ID — if absent, falls back to mock data
 }
 
 // ─── Gallery ─────────────────────────────────────────────────────────────────

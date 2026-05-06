@@ -5,71 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useCheckout } from "@/context/CheckoutContext";
 import { useSeason } from "@/context/SeasonContext";
-import type { Guide, CalendarDay } from "@/types";
-
-// ─── Calendar ─────────────────────────────────────────────────────────────────
-
-function CalendarGrid({ days }: { days: CalendarDay[] }) {
-  const t = useTranslations("team");
-
-  const statusStyle = (status: CalendarDay["status"]): React.CSSProperties => {
-    switch (status) {
-      case "available": return { background: "var(--season-accent)", opacity: 1 };
-      case "booked":    return { background: "var(--text-muted)", opacity: 0.4 };
-      case "pending":   return { background: "#F59E0B", opacity: 0.75 };
-      case "off":       return { background: "var(--surface-3)", border: "1px solid var(--border-subtle)" };
-    }
-  };
-
-  const legendItems: { status: CalendarDay["status"]; label: string }[] = [
-    { status: "available", label: t("available") },
-    { status: "booked",    label: t("booked") },
-    { status: "pending",   label: t("pending") },
-    { status: "off",       label: t("off") },
-  ];
-
-  return (
-    <div>
-      <p
-        className="font-mono text-[0.6rem] tracking-[0.3em] uppercase mb-3"
-        style={{ color: "var(--text-muted)" }}
-      >
-        {t("availability")}
-      </p>
-
-      <div className="grid grid-cols-10 gap-1 mb-4">
-        {days.map((day) => (
-          <div
-            key={day.date}
-            title={`Day ${day.date} — ${day.status}`}
-            className="aspect-square rounded-sm flex items-center justify-center font-mono"
-            style={{
-              fontSize: "0.5rem",
-              color: "rgba(0,0,0,0.5)",
-              ...statusStyle(day.status),
-            }}
-          >
-            {day.date}
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        {legendItems.map(({ status, label }) => (
-          <div key={status} className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={statusStyle(status)} />
-            <span
-              className="font-mono text-[0.6rem] tracking-wider uppercase"
-              style={{ color: "var(--text-muted)" }}
-            >
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { MonthCalendar } from "./MonthCalendar";
+import type { Guide } from "@/types";
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
@@ -288,7 +225,7 @@ export function GuideModal({ guide, isOpen, onClose }: GuideModalProps) {
               </div>
 
               {/* Availability calendar */}
-              <CalendarGrid days={guide.calendar} />
+              <MonthCalendar guideId={guide.id} initialDays={guide.calendar} />
 
               {/* Divider */}
               <div style={{ borderTop: "1px solid var(--border-subtle)" }} />

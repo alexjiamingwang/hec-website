@@ -49,6 +49,7 @@ export const guides: Guide[] = [
       [5, 6, 12, 13, 19, 25, 26, 29, 30],
       [7, 20, 27]
     ),
+    calendarId: process.env.NEXT_PUBLIC_MIBO_CALENDAR_ID,
   },
   {
     id: "kai-nakamura",
