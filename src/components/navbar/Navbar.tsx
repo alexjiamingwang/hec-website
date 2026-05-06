@@ -65,7 +65,7 @@ export function Navbar({ locale }: NavbarProps) {
               src="/images/logo-clean.png"
               alt="Hokkaido Elite Club"
               style={{
-                height: 44,
+                height: 62,
                 width: "auto",
                 // Winter dark bg → invert black strokes to white
                 // Summer light bg → strokes stay dark, no filter needed
