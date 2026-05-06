@@ -174,7 +174,7 @@ export function MonthCalendar({ guideId, initialDays }: MonthCalendarProps) {
               )}
               style={{
                 fontSize: "0.5rem",
-                color: status === "off" ? "var(--text-muted)" : "rgba(0,0,0,0.55)",
+                color: "rgba(0,0,0,0.55)",
                 ringOffsetColor: "var(--surface-1)",
                 ringColor: isToday ? "var(--season-accent)" : undefined,
                 outline: isToday ? `2px solid var(--season-accent)` : undefined,
