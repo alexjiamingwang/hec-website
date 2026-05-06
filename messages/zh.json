@@ -108,11 +108,9 @@
     "certifications": "资质认证",
     "specialties": "专业领域",
     "languages": "使用语言",
-    "availability": "未来30天空档",
+    "availability": "可用日期",
     "available": "可预订",
     "booked": "已预订",
-    "pending": "待确认",
-    "off": "休息日",
     "inquireGuide": "向此向导咨询"
   },
   "gallery": {

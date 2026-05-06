@@ -108,11 +108,9 @@
     "certifications": "Certifications",
     "specialties": "Specialties",
     "languages": "Languages",
-    "availability": "Availability — Next 30 Days",
+    "availability": "Availability",
     "available": "Available",
     "booked": "Booked",
-    "pending": "Pending",
-    "off": "Rest Day",
     "inquireGuide": "Inquire with this Guide"
   },
   "gallery": {

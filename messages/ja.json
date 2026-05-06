@@ -108,11 +108,9 @@
     "certifications": "資格・認定",
     "specialties": "専門分野",
     "languages": "対応言語",
-    "availability": "空き状況 — 直近30日",
+    "availability": "空き状況",
     "available": "空き",
     "booked": "予約済",
-    "pending": "確認中",
-    "off": "休養日",
     "inquireGuide": "このガイドに問い合わせる"
   },
   "gallery": {

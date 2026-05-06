@@ -1,13 +1,10 @@
 import type { Guide, CalendarDay } from "@/types";
 
-// Helper: generate a mock 30-day calendar
-function mockCalendar(bookedDays: number[], pendingDays: number[] = []): CalendarDay[] {
+// Helper: generate a mock 30-day calendar (binary: booked or available)
+function mockCalendar(bookedDays: number[]): CalendarDay[] {
   return Array.from({ length: 30 }, (_, i) => {
     const date = i + 1;
-    if (bookedDays.includes(date))   return { date, status: "booked" };
-    if (pendingDays.includes(date))  return { date, status: "pending" };
-    if (date % 7 === 0)              return { date, status: "off" }; // rest day
-    return { date, status: "available" };
+    return { date, status: bookedDays.includes(date) ? "booked" : "available" };
   });
 }
 
@@ -45,10 +42,7 @@ export const guides: Guide[] = [
     summerSpecialties: ["SUP & Sea Kayaking", "Private Boat Charter", "Shakotan Peninsula", "Mandarin-Speaking Groups"],
     photo: "/images/team/mibo-yu.jpg",
     languages: ["Chinese", "Japanese", "English"],
-    calendar: mockCalendar(
-      [5, 6, 12, 13, 19, 25, 26, 29, 30],
-      [7, 20, 27]
-    ),
+    calendar: mockCalendar([5, 6, 12, 13, 19, 25, 26, 29, 30]),
     calendarId: process.env.NEXT_PUBLIC_MIBO_CALENDAR_ID,
   },
   {
@@ -67,10 +61,7 @@ export const guides: Guide[] = [
     specialties: ["Deep Powder Backcountry", "Terrain Analysis", "Niseko / Rusutsu"],
     photo: "/images/team/kai-nakamura.jpg",
     languages: ["Japanese", "English"],
-    calendar: mockCalendar(
-      [3, 4, 5, 10, 11, 17, 18, 22, 23, 24, 28],
-      [6, 12, 19]
-    ),
+    calendar: mockCalendar([3, 4, 5, 10, 11, 17, 18, 22, 23, 24, 28]),
   },
   {
     id: "sasha-volkov",
@@ -88,10 +79,7 @@ export const guides: Guide[] = [
     specialties: ["Technical Backcountry", "Multi-Day Traverses", "Kiroro / Furano", "Alpine Summer Trekking"],
     photo: "/images/team/sasha-volkov.jpg",
     languages: ["English", "Russian"],
-    calendar: mockCalendar(
-      [1, 2, 8, 9, 14, 15, 20, 21, 26, 27],
-      [3, 16, 22]
-    ),
+    calendar: mockCalendar([1, 2, 8, 9, 14, 15, 20, 21, 26, 27]),
   },
   {
     id: "chen-wei",
@@ -109,10 +97,7 @@ export const guides: Guide[] = [
     specialties: ["Snow Science Briefings", "Tech Analysis", "Niseko / Rusutsu", "Mandarin-Speaking Groups"],
     photo: "/images/team/chen-wei.jpg",
     languages: ["Mandarin", "Japanese", "English"],
-    calendar: mockCalendar(
-      [2, 3, 9, 10, 16, 17, 23, 24],
-      [4, 11, 18, 25]
-    ),
+    calendar: mockCalendar([2, 3, 9, 10, 16, 17, 23, 24]),
   },
   {
     id: "emma-larsen",
@@ -130,10 +115,7 @@ export const guides: Guide[] = [
     specialties: ["Summer Alpine", "Wildlife & Flora", "Daisetsuzan / Shiretoko", "Photography Tours"],
     photo: "/images/team/emma-larsen.jpg",
     languages: ["English", "Norwegian", "Japanese (conversational)"],
-    calendar: mockCalendar(
-      [4, 5, 11, 12, 18, 19, 25, 26],
-      [6, 13, 20]
-    ),
+    calendar: mockCalendar([4, 5, 11, 12, 18, 19, 25, 26]),
   },
 ];
 

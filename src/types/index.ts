@@ -36,7 +36,7 @@ export interface Certification {
 
 export interface CalendarDay {
   date: number;              // 1–30/31
-  status: "available" | "booked" | "pending" | "off";
+  status: "available" | "booked";
 }
 
 export interface Guide {

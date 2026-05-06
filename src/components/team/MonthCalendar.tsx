@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { clsx } from "clsx";
 import { useGuideCalendar } from "@/hooks/useGuideCalendar";
-import { useSeason } from "@/context/SeasonContext";
 import type { CalendarDay } from "@/types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -35,12 +34,8 @@ function firstDayOfWeek(year: number, month: number): number {
 // ─── Status styles ────────────────────────────────────────────────────────────
 
 function statusStyle(status: CalendarDay["status"]): React.CSSProperties {
-  switch (status) {
-    case "available": return { background: "var(--season-accent)", opacity: 1 };
-    case "booked":    return { background: "var(--text-muted)", opacity: 0.45 };
-    case "pending":   return { background: "#F59E0B", opacity: 0.8 };
-    case "off":       return { background: "var(--surface-3)", border: "1px solid var(--border-subtle)" };
-  }
+  if (status === "booked") return { background: "var(--text-muted)", opacity: 0.45 };
+  return { background: "var(--season-accent)", opacity: 1 }; // available
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -52,7 +47,6 @@ interface MonthCalendarProps {
 
 export function MonthCalendar({ guideId, initialDays }: MonthCalendarProps) {
   const t = useTranslations("team");
-  const { isWinter } = useSeason();
   const { days, month, loading, source, goToPrevMonth, goToNextMonth } =
     useGuideCalendar(guideId, initialDays);
 
@@ -82,8 +76,6 @@ export function MonthCalendar({ guideId, initialDays }: MonthCalendarProps) {
   const legendItems: { status: CalendarDay["status"]; label: string }[] = [
     { status: "available", label: t("available") },
     { status: "booked",    label: t("booked") },
-    { status: "pending",   label: t("pending") },
-    { status: "off",       label: t("off") },
   ];
 
   return (
