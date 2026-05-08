@@ -47,7 +47,9 @@
       "deposit": "Deposit Required",
       "perGroup": "per group · incl. instructor lift ticket",
       "proceed": "Proceed to Booking",
-      "placeholder": "Select options above to see pricing"
+      "placeholder": "Select options above to see pricing",
+      "pickDatesPrompt": "Pick dates to see your rate",
+      "offSeasonNote": "Selected dates are outside our winter operating season (Nov 20 – Mar 31). Please pick dates within that range."
     },
     "winter": {
       "techAnalysis": {

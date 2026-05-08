@@ -47,7 +47,9 @@
       "deposit": "必要デポジット",
       "perGroup": "グループ料金 · インストラクターのリフト券込み",
       "proceed": "予約に進む",
-      "placeholder": "上記のオプションを選択してください"
+      "placeholder": "上記のオプションを選択してください",
+      "pickDatesPrompt": "日程を選択して料金をご確認ください",
+      "offSeasonNote": "選択された日程は冬季営業期間外です（11月20日〜3月31日）。期間内の日程をお選びください。"
     },
     "winter": {
       "techAnalysis": {

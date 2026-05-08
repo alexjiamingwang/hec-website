@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useCheckout } from "@/context/CheckoutContext";
 import {
-  calculateRate,
+  calculateMultiDayRate,
   formatYen,
   type PricingArea,
-  type PricingSeasonality,
   type PricingGroupSize,
   type PricingDuration,
 } from "../../../data/pricing";
+import { DateRangePopover, type DateRangeValue } from "./DateRangePopover";
 
 // ─── Location → Area mapping ──────────────────────────────────────────────────
 
@@ -56,11 +56,6 @@ type LocationValue = string;
 
 // ─── Simple flat options ──────────────────────────────────────────────────────
 
-const SEASON_OPTIONS = [
-  { value: "regular" as PricingSeasonality, label: "Regular" },
-  { value: "peak"    as PricingSeasonality, label: "Peak" },
-];
-
 const DURATION_OPTIONS = [
   { value: "3hr" as PricingDuration, label: "3 Hours" },
   { value: "6hr" as PricingDuration, label: "6 Hours" },
@@ -103,7 +98,6 @@ function CustomDropdown({
   const [hovered, setHovered] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -112,7 +106,6 @@ function CustomDropdown({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Find selected label from either flat options or grouped options
   const allOptions = options ?? groups?.flatMap((g) => g.options) ?? [];
   const selectedOption = allOptions.find((o) => o.value === value);
 
@@ -155,7 +148,6 @@ function CustomDropdown({
         {label}
       </label>
 
-      {/* Trigger */}
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -178,7 +170,6 @@ function CustomDropdown({
         </motion.span>
       </button>
 
-      {/* Dropdown panel */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -203,10 +194,7 @@ function CustomDropdown({
               boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
             }}
           >
-            {/* Flat options */}
             {options && options.map(renderOption)}
-
-            {/* Grouped options */}
             {groups &&
               groups.map((grp) => (
                 <div key={grp.group}>
@@ -236,20 +224,43 @@ export function RateCalculator() {
   const t = useTranslations("services.calculator");
   const { openCheckout } = useCheckout();
 
-  const [location, setLocation] = useState<LocationValue>("niseko");
-  const [seasonality, setSeasonality] = useState<PricingSeasonality>("regular");
-  const [duration, setDuration] = useState<PricingDuration>("6hr");
-  const [groupSize, setGroupSize] = useState<PricingGroupSize>("1-4");
+  const [location,            setLocation]            = useState<LocationValue>("niseko");
+  // dateRange: live selection shown in the picker trigger button
+  const [dateRange,           setDateRange]           = useState<DateRangeValue>({});
+  // committedRange: locked in when user clicks Done — drives the rate total
+  const [committedRange,      setCommittedRange]      = useState<DateRangeValue>({});
+  const [duration,            setDuration]            = useState<PricingDuration>("6hr");
+  const [groupSize,           setGroupSize]           = useState<PricingGroupSize>("1-4");
   const [specifiedInstructor, setSpecifiedInstructor] = useState(false);
 
   // Derive pricing area from selected location
   const area: PricingArea =
     ALL_LOCATIONS.find((l) => l.value === location)?.area ?? "outside-sapporo";
 
-  const result = useMemo(
-    () => calculateRate({ area, seasonality, duration, groupSize, specifiedInstructor }),
-    [area, seasonality, duration, groupSize, specifiedInstructor]
-  );
+  // Rate is calculated from the COMMITTED range (only updates when Done is clicked)
+  const startDate = committedRange.from;
+  const endDate   = committedRange.to ?? committedRange.from;
+
+  const result = useMemo(() => {
+    if (!startDate || !endDate) return null;
+    return calculateMultiDayRate({
+      area,
+      groupSize,
+      duration,
+      specifiedInstructor,
+      startDate,
+      endDate,
+    });
+  }, [area, groupSize, duration, specifiedInstructor, startDate, endDate]);
+
+  // null result with committed dates = off-season dates crept in (defensive)
+  const hasOffSeason = !!(startDate && endDate && result === null);
+
+  // Clear both live selection and committed range
+  const handleReset = () => {
+    setDateRange({});
+    setCommittedRange({});
+  };
 
   const handleProceed = () => {
     if (!result) return;
@@ -275,7 +286,7 @@ export function RateCalculator() {
         </h3>
       </div>
 
-      {/* Controls grid */}
+      {/* Controls grid — Season dropdown replaced by DateRangePopover */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
         {/* Location */}
         <CustomDropdown
@@ -285,12 +296,12 @@ export function RateCalculator() {
           groups={LOCATION_GROUPS}
         />
 
-        {/* Seasonality */}
-        <CustomDropdown
-          label="Season"
-          value={seasonality}
-          onChange={(v) => setSeasonality(v as PricingSeasonality)}
-          options={SEASON_OPTIONS}
+        {/* Date range picker */}
+        <DateRangePopover
+          value={dateRange}
+          onChange={setDateRange}
+          onReset={handleReset}
+          onCommit={(v) => setCommittedRange(v)}
         />
 
         {/* Duration */}
@@ -315,7 +326,7 @@ export function RateCalculator() {
         <span
           className="w-5 h-5 border flex items-center justify-center transition-colors duration-200 flex-shrink-0"
           style={{
-            background: specifiedInstructor ? "var(--season-accent)" : "var(--surface-3)",
+            background:  specifiedInstructor ? "var(--season-accent)" : "var(--surface-3)",
             borderColor: specifiedInstructor ? "var(--season-accent)" : "var(--border-mid)",
           }}
         >
@@ -341,76 +352,98 @@ export function RateCalculator() {
           className="font-mono text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200"
           style={{ color: "var(--text-secondary)" }}
         >
-          {t("specifiedInstructor")} +¥10,000
+          {t("specifiedInstructor")}
         </span>
       </label>
 
       {/* Season date reference */}
-      <div
-        className="flex flex-wrap gap-x-8 gap-y-2 mb-8 pb-8"
-        style={{ borderBottom: "1px solid var(--border-subtle)" }}
-      >
+      <div className="mb-8 flex flex-col gap-1">
         <p className="font-mono text-[0.6rem] tracking-wider" style={{ color: "var(--text-muted)" }}>
-          <span className="accent-text mr-1.5">●</span>
-          Peak: Dec 15–Jan 12 &amp; Jan 24–Feb 25
+          <span className="mr-1.5" style={{ color: "var(--season-accent)" }}>●</span>
+          Peak season: Dec 15–Jan 12 &amp; Jan 24–Feb 25
         </p>
         <p className="font-mono text-[0.6rem] tracking-wider" style={{ color: "var(--text-muted)" }}>
           <span className="mr-1.5" style={{ color: "var(--text-muted)" }}>●</span>
-          Regular: Nov 20–Dec 14 | Jan 13–23 | Feb 26–end
+          Regular season: Nov 20–Dec 14 | Jan 13–23 | Feb 26–season end
         </p>
       </div>
 
-      {/* Result + CTA */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        {result ? (
-          <div>
-            <p
-              className="font-mono text-[0.6rem] tracking-[0.3em] uppercase mb-2"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Total
-            </p>
-            <p
-              className="font-display text-5xl md:text-6xl"
-              style={{ color: "var(--text-primary)", lineHeight: 1 }}
-            >
-              {formatYen(result.total)}
-            </p>
-            <p
-              className="font-mono text-[0.6rem] tracking-wider mt-2"
-              style={{ color: "var(--text-muted)" }}
-            >
-              per group · includes instructor lift ticket
-              {result.surcharge > 0 && " · specified instructor"}
-            </p>
-          </div>
-        ) : (
+      {/* Result area */}
+      <div
+        className="pt-8"
+        style={{ borderTop: "1px solid var(--border-subtle)" }}
+      >
+        {/* No dates committed yet */}
+        {!committedRange.from && (
           <p
             className="font-mono text-xs tracking-widest uppercase"
             style={{ color: "var(--text-muted)" }}
           >
-            {t("placeholder")}
+            {t("pickDatesPrompt")}
           </p>
         )}
 
-        {/* Proceed CTA */}
-        <button
-          onClick={handleProceed}
-          disabled={!result}
-          className="group relative px-8 py-4 font-mono text-xs tracking-[0.25em] uppercase overflow-hidden border transition-colors duration-300 flex-shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{
-            borderColor: "var(--season-accent)",
-            color: "var(--text-primary)",
-          }}
-        >
-          <span
-            className="absolute inset-0 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out group-disabled:translate-x-[-101%]"
-            style={{ background: "var(--season-accent)" }}
-          />
-          <span className="relative group-hover:text-obsidian transition-colors duration-300">
-            {t("proceed")}
-          </span>
-        </button>
+        {/* Off-season warning */}
+        {hasOffSeason && (
+          <p
+            className="font-mono text-xs tracking-wider"
+            style={{ color: "color-mix(in srgb, var(--season-accent) 80%, var(--text-muted))" }}
+          >
+            ⚠ {t("offSeasonNote")}
+          </p>
+        )}
+
+        {/* Total + CTA */}
+        {result && (
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <p
+                className="font-mono text-[0.6rem] tracking-[0.3em] uppercase mb-2"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Total
+              </p>
+              <p
+                className="font-display text-5xl md:text-6xl"
+                style={{ color: "var(--text-primary)", lineHeight: 1 }}
+              >
+                {formatYen(result.total)}
+              </p>
+              {/* Day-by-day breakdown */}
+              <p
+                className="font-mono text-[0.6rem] tracking-wider mt-2"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {result.breakdown}
+              </p>
+              <p
+                className="font-mono text-[0.6rem] tracking-wider mt-1"
+                style={{ color: "var(--text-muted)" }}
+              >
+                per group
+                {result.surcharge > 0 && " · specified instructor +¥10,000"}
+              </p>
+            </div>
+
+            {/* Proceed CTA */}
+            <button
+              onClick={handleProceed}
+              className="group relative px-8 py-4 font-mono text-xs tracking-[0.25em] uppercase overflow-hidden border transition-colors duration-300 flex-shrink-0"
+              style={{
+                borderColor: "var(--season-accent)",
+                color: "var(--text-primary)",
+              }}
+            >
+              <span
+                className="absolute inset-0 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out"
+                style={{ background: "var(--season-accent)" }}
+              />
+              <span className="relative group-hover:text-obsidian transition-colors duration-300">
+                {t("proceed")}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

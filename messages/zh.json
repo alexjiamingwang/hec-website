@@ -47,7 +47,9 @@
       "deposit": "所需定金",
       "perGroup": "团队价 · 含教练缆车票",
       "proceed": "前往预订",
-      "placeholder": "请选择以上选项以查看价格"
+      "placeholder": "请选择以上选项以查看价格",
+      "pickDatesPrompt": "选择日期以查看费率",
+      "offSeasonNote": "所选日期超出冬季运营范围（11月20日至3月31日），请选择该范围内的日期。"
     },
     "winter": {
       "techAnalysis": {

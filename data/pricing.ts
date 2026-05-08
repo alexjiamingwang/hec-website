@@ -73,6 +73,174 @@ export const DEPOSIT_PERCENTAGE = 0.30; // 30%
 export const PEAK_SEASON_LABEL    = "Dec 15–Jan 12 & Jan 24–Feb 25";
 export const REGULAR_SEASON_LABEL = "Nov 20–Dec 14 | Jan 13–23 | Feb 26–season end";
 
+// ─── Programmatic season ranges ───────────────────────────────────────────────
+// Month/day only — year-agnostic so they apply every winter season.
+// Update these if the official season dates shift.
+
+export type DayClassification = "peak" | "regular" | "off-season";
+
+/** Peak season windows (inclusive, month/day). */
+export const PEAK_RANGES: { start: { m: number; d: number }; end: { m: number; d: number } }[] = [
+  { start: { m: 12, d: 15 }, end: { m: 1,  d: 12 } },  // Dec 15 → Jan 12
+  { start: { m: 1,  d: 24 }, end: { m: 2,  d: 25 } },  // Jan 24 → Feb 25
+];
+
+/** Full operating season window (inclusive). Dates outside are "off-season". */
+export const SEASON_WINDOW = {
+  start: { m: 11, d: 20 },  // Nov 20
+  end:   { m: 3,  d: 31 },  // Mar 31
+};
+
+/** Returns true if (m, d) falls within a range. Handles year-wrap (e.g. Dec→Jan). */
+function inMonthDayRange(
+  m: number,
+  d: number,
+  range: { start: { m: number; d: number }; end: { m: number; d: number } }
+): boolean {
+  // Convert month-day to a comparable integer (mmdd)
+  const val   = m * 100 + d;
+  const start = range.start.m * 100 + range.start.d;
+  const end   = range.end.m   * 100 + range.end.d;
+
+  if (start <= end) {
+    // Normal range (e.g. Jan 24 → Feb 25)
+    return val >= start && val <= end;
+  } else {
+    // Wraps year-end (e.g. Dec 15 → Jan 12): val >= Dec15 OR val <= Jan12
+    return val >= start || val <= end;
+  }
+}
+
+/**
+ * Classify a calendar date as peak, regular, or off-season.
+ *
+ * @example
+ *   classifyDate(new Date(2026, 0, 10)) // → "peak"   (Jan 10 is in Dec15–Jan12)
+ *   classifyDate(new Date(2026, 0, 15)) // → "regular" (Jan 13–23)
+ *   classifyDate(new Date(2026, 4, 1))  // → "off-season" (May)
+ */
+export function classifyDate(date: Date): DayClassification {
+  const m = date.getMonth() + 1;  // 1-based
+  const d = date.getDate();
+
+  for (const range of PEAK_RANGES) {
+    if (inMonthDayRange(m, d, range)) return "peak";
+  }
+  if (inMonthDayRange(m, d, SEASON_WINDOW)) return "regular";
+  return "off-season";
+}
+
+// ─── Multi-day rate types ─────────────────────────────────────────────────────
+
+export interface MultiDayRateInput {
+  area:                PricingArea;
+  groupSize:           PricingGroupSize;
+  duration:            PricingDuration;
+  specifiedInstructor?: boolean;
+  startDate:           Date;
+  endDate:             Date;  // inclusive; equals startDate for single-day bookings
+}
+
+export interface MultiDayRateResult {
+  totalDays:          number;
+  peakDays:           number;
+  regularDays:        number;
+  offSeasonDays:      number;   // > 0 → booking spans off-season (invalid)
+  peakRatePerDay:     number;   // single-day peak rate for this area/group/duration
+  regularRatePerDay:  number;   // single-day regular rate
+  peakSubtotal:       number;   // peakDays × peakRatePerDay
+  regularSubtotal:    number;   // regularDays × regularRatePerDay
+  surcharge:          number;   // specified-instructor fee (one-time, not per-day)
+  total:              number;
+  deposit:            number;   // 30% of total
+  areaLabel:          string;
+  // Legacy RateResult-compatible fields so CheckoutModal doesn't need adapting
+  basePrice:          number;   // = peakSubtotal + regularSubtotal
+  breakdown:          string;   // human-readable, e.g. "3 peak × ¥100,000 + 2 regular × ¥80,000"
+}
+
+/**
+ * Calculate a multi-day booking rate.
+ * Returns null when:
+ *   - startDate > endDate
+ *   - any day in the range is off-season
+ *   - no pricing entry found for the given area/group/duration
+ *
+ * @example
+ *   // Jan 10–15, 2026:  Jan10=peak, Jan11=peak, Jan12=peak, Jan13=regular, Jan14=regular, Jan15=regular
+ *   // → 3 peak days + 3 regular days
+ */
+export function calculateMultiDayRate(input: MultiDayRateInput): MultiDayRateResult | null {
+  const { area, groupSize, duration, specifiedInstructor, startDate, endDate } = input;
+
+  if (startDate > endDate) return null;
+
+  // Look up per-day rates from the pricing table
+  const peakEntry    = pricingTable.find(e => e.area === area && e.seasonality === "peak"    && e.groupSize === groupSize);
+  const regularEntry = pricingTable.find(e => e.area === area && e.seasonality === "regular" && e.groupSize === groupSize);
+  if (!peakEntry || !regularEntry) return null;
+
+  const peakRatePerDay    = peakEntry[duration];
+  const regularRatePerDay = regularEntry[duration];
+
+  // Iterate start→end inclusive, counting day types
+  let peakDays = 0, regularDays = 0, offSeasonDays = 0;
+  const cursor = new Date(startDate);
+  cursor.setHours(12, 0, 0, 0);  // noon to avoid DST edge-cases
+  const last = new Date(endDate);
+  last.setHours(12, 0, 0, 0);
+
+  while (cursor <= last) {
+    const cls = classifyDate(cursor);
+    if      (cls === "peak")       peakDays++;
+    else if (cls === "regular")    regularDays++;
+    else                           offSeasonDays++;
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  if (offSeasonDays > 0) return null;
+
+  const totalDays      = peakDays + regularDays;
+  const peakSubtotal   = peakDays    * peakRatePerDay;
+  const regularSubtotal = regularDays * regularRatePerDay;
+  const basePrice      = peakSubtotal + regularSubtotal;
+  const surcharge      = specifiedInstructor ? SPECIFIED_INSTRUCTOR_SURCHARGE : 0;
+  const total          = basePrice + surcharge;
+  const deposit        = Math.round(total * DEPOSIT_PERCENTAGE);
+
+  // Build a human-readable breakdown string
+  const AREA_LABELS: Record<PricingArea, string> = {
+    "sapporo":         "Sapporo Area (Teine / Kokusai / Moiwa)",
+    "outside-sapporo": "Outside Sapporo (Niseko / Kiroro / Rusutsu / Furano…)",
+  };
+
+  let breakdown: string;
+  if (peakDays === 0) {
+    breakdown = `${regularDays} regular ${regularDays === 1 ? "day" : "days"} × ${formatYen(regularRatePerDay)}`;
+  } else if (regularDays === 0) {
+    breakdown = `${peakDays} peak ${peakDays === 1 ? "day" : "days"} × ${formatYen(peakRatePerDay)}`;
+  } else {
+    breakdown = `${peakDays} peak × ${formatYen(peakRatePerDay)} + ${regularDays} regular × ${formatYen(regularRatePerDay)} = ${formatYen(basePrice)}`;
+  }
+
+  return {
+    totalDays,
+    peakDays,
+    regularDays,
+    offSeasonDays,
+    peakRatePerDay,
+    regularRatePerDay,
+    peakSubtotal,
+    regularSubtotal,
+    surcharge,
+    total,
+    deposit,
+    areaLabel: AREA_LABELS[area],
+    basePrice,
+    breakdown,
+  };
+}
+
 // ─── Cancellation policy ──────────────────────────────────────────────────────
 export const CANCELLATION_POLICY = [
   { window: "0–14 days before / no-show", charge: "100%" },
